@@ -1,0 +1,29 @@
+gcloud config set compute/zone us-west1-c
+
+gsutil -m cp -r gs://spls/gsp053/orchestrate-with-kubernetes .
+cd orchestrate-with-kubernetes/kubernetes
+
+gcloud container clusters create griffin-dev \
+  --machine-type e2-standard-4 \
+  --num-nodes 2 \
+  --network=griffin-dev-vpc \
+  --subnet=griffin-dev-wp
+  --zone us-east1-b \
+  --scopes "https://www.googleapis.com/auth/projecthosting,storage-rw"
+
+  kubectl explain deployment
+
+  kubectl explain deployment --recursive
+
+  kubectl explain deployment.metadata.name
+
+  kubectl create secret generic tls-certs --from-file tls/
+
+  kubectl create configmap nginx-frontend-conf --from-file=nginx/frontend.conf
+
+  kubectl create secret generic tls-certs --from-file tls/
+kubectl create configmap nginx-frontend-conf --from-file=nginx/frontend.conf
+kubectl create -f deployments/frontend.yaml
+kubectl create -f services/frontend.yaml
+
+kubectl get pods | grep hello- | wc -l

@@ -1,14 +1,28 @@
 set region and zone 
 gcloud config set compute/region us-central1
 gcloud config set compute/zone us-central1-f
-gcloud config set compute/region us-west3
-gcloud config set compute/zone us-west3-c
+gcloud config set compute/region us-east1
+gcloud config set compute/zone us-east1-b
 
 gcloud container clusters create --machine-type=e2-medium --zone=us-central1-f nucleus-cluster
 
-gcloud container clusters get-credentials nucleus-cluster
+gcloud container clusters get-credentials bootcamp
 
 gcloud compute instances create nucleus-jumphost-330 --machine-type e2-micro --zone=us-central1
+
+gcloud compute instances create bastion --machine-type e2-micro --network-interface=network=griffin-dev-vpc,subnet=griffin-dev-mgmt  --network-interface=network=griffin-prod-vpc,subnet=griffin-prod-mgmt --tags=ssh --zone=us-east1-b
+
+gcloud container clusters create griffin-dev \
+  --network griffin-dev-vpc \
+  --subnetwork griffin-dev-wp \
+  --machine-type e2-medium \
+  --num-nodes 2  \
+  --zone us-east1-b
+
+gcloud iam service-accounts keys create key.json \
+    --iam-account=cloud-sql-proxy@$GOOGLE_CLOUD_PROJECT.iam.gserviceaccount.com
+kubectl create secret generic cloudsql-instance-credentials \
+    --from-file key.json
 
 kubectl create deployment nucleus-app --image=gcr.io/google-samples/hello-app:2.0
 kubectl expose deployment nucleus-app --type=LoadBalancer --port 8080
@@ -134,3 +148,5 @@ gcloud compute forwarding-rules create http-content-rule \
    --global \
    --target-http-proxy=http-lb-proxy \
    --ports=80
+
+

@@ -1,0 +1,20 @@
+gsutil mb gs://<YOUR-BUCKET-NAME>
+gsutil cp -r gs://YOUR-BUCKET-NAME/ada.jpg .
+gsutil acl ch -u AllUsers:R gs://YOUR-BUCKET-NAME/ada.jpg
+gsutil acl ch -d AllUsers gs://qwiklabs-gcp-00-0177636db21e/ada.jpg
+gsutil rm gs://qwiklabs-gcp-00-0177636db21e/ada.jpg
+
+gcloud functions deploy helloWorld \
+  --stage-bucket qwiklabs-gcp-01-b99f088d4427 \
+  --trigger-topic hello_world \
+  --runtime nodejs20
+
+gcloud pubsub subscriptions pull --auto-ack MySub
+
+gcloud pubsub topics create topic-memories-689
+
+gcloud  pubsub subscriptions create --topic myTopic Test1
+
+gcloud pubsub topics publish myTopic --message "Publisher's name is <YOUR NAME>"
+
+gcloud pubsub subscriptions pull mySubscription --auto-ack --limit=3
