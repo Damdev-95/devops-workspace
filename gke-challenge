@@ -1,0 +1,23 @@
+export ZONE=us-east1-d
+
+export CLUSTER_NAME=onlineboutique-cluster-731
+
+export POOL_NAME=optimized-pool-9553
+
+export MAX_REPLICAS=13
+
+
+
+curl -LO raw.githubusercontent.com/quiccklabs/Labs_solutions/master/August%202023%20Optimize%20Costs%20for%20Google%20Kubernetes%20Engine%20Challenge%20Lab/quicklabgsp343.sh
+
+sudo chmod +x quicklabgsp343.sh
+
+./quicklabgsp343.sh
+
+kubectl create namespace dev 
+
+kubectl create namespace prod
+
+git clone https://github.com/GoogleCloudPlatform/microservices-demo.git &&
+cd microservices-demo && kubectl apply -f ./release/kubernetes-manifests.yaml --namespace dev
+

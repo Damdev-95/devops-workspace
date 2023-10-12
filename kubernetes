@@ -1,0 +1,73 @@
+kubectl exec monolith --stdin --tty -c monolith -- /bin/sh
+
+CREATE USER migration_user PASSWORD 'DMS_1s_cool!';
+ALTER DATABASE orders OWNER TO migration_user;
+ALTER ROLE migration_user WITH REPLICATION;
+
+\c postgres;
+GRANT USAGE ON SCHEMA pglogical TO migration_user;
+GRANT ALL ON SCHEMA pglogical TO migration_user;
+GRANT SELECT ON pglogical.tables TO migration_user;
+GRANT SELECT ON pglogical.depend TO migration_user;
+GRANT SELECT ON pglogical.local_node TO migration_user;
+GRANT SELECT ON pglogical.local_sync_status TO migration_user;
+GRANT SELECT ON pglogical.node TO migration_user;
+GRANT SELECT ON pglogical.node_interface TO migration_user;
+GRANT SELECT ON pglogical.queue TO migration_user;
+GRANT SELECT ON pglogical.replication_set TO migration_user;
+GRANT SELECT ON pglogical.replication_set_seq TO migration_user;
+GRANT SELECT ON pglogical.replication_set_table TO migration_user;
+GRANT SELECT ON pglogical.sequence_state TO migration_user;
+GRANT SELECT ON pglogical.subscription TO migration_user;
+
+\c orders;
+GRANT USAGE ON SCHEMA pglogical TO migration_user;
+GRANT ALL ON SCHEMA pglogical TO migration_user;
+GRANT SELECT ON pglogical.tables TO migration_user;
+GRANT SELECT ON pglogical.depend TO migration_user;
+GRANT SELECT ON pglogical.local_node TO migration_user;
+GRANT SELECT ON pglogical.local_sync_status TO migration_user;
+GRANT SELECT ON pglogical.node TO migration_user;
+GRANT SELECT ON pglogical.node_interface TO migration_user;
+GRANT SELECT ON pglogical.queue TO migration_user;
+GRANT SELECT ON pglogical.replication_set TO migration_user;
+GRANT SELECT ON pglogical.replication_set_seq TO migration_user;
+GRANT SELECT ON pglogical.replication_set_table TO migration_user;
+GRANT SELECT ON pglogical.sequence_state TO migration_user;
+GRANT SELECT ON pglogical.subscription TO migration_user;
+
+
+GRANT USAGE ON SCHEMA public TO migration_user;
+GRANT ALL ON SCHEMA public TO migration_user;
+GRANT SELECT ON public.distribution_centers TO migration_user;
+GRANT SELECT ON public.inventory_items TO migration_user;
+GRANT SELECT ON public.order_items TO migration_user;
+GRANT SELECT ON public.products TO migration_user;
+GRANT SELECT ON public.users TO migration_user;
+
+\c orders;
+\dt
+ALTER TABLE public.distribution_centers OWNER TO migration_user;
+ALTER TABLE public.inventory_items OWNER TO migration_user;
+ALTER TABLE public.order_items OWNER TO migration_user;
+ALTER TABLE public.products OWNER TO migration_user;
+ALTER TABLE public.users OWNER TO migration_user;
+\dt
+
+gcloud compute networks create vpc-network-5smx --subnet-mode custom
+
+gcloud compute networks subnets create subnet-a-gopy \
+   --network vpc-network-5smx \
+   --region us-east4 \
+   --range 10.10.10.0/24
+
+gcloud compute networks subnets create subnet-b-m8vv \
+   --network vpc-network-5smx \
+   --region europe-west4 \
+   --range 10.10.20.0/24
+
+gcloud compute firewall-rules create ggua-firewall-ssh --direction=INGRESS --priority=65535 --network=vpc-network-5smx --action=ALLOW --rules=tcp:22 --source-ranges=0.0.0.0/0
+
+gcloud compute firewall-rules create wmdu-firewall-icmp --direction=INGRESS --priority=65535 --network=vpc-network-5smx --action=ALLOW --rules=icmp --source-ranges=0.0.0.0/0
+
+gcloud compute firewall-rules create gttx-firewall-rdp --direction=INGRESS --priority=65535 --network=vpc-network-5smx --action=ALLOW --rules=tcp:3389 --source-ranges=0.0.0.0/0

@@ -1,0 +1,34 @@
+gcloud container node-pools create larger-pool \
+  --cluster=hello-demo-cluster \
+  --machine-type=e2-standard-2 \
+  --num-nodes=1 \
+  --zone=us-east1-c
+
+gcloud container clusters resize hello-demo-cluster --node-pool my-node-pool \
+    --num-nodes 3 --zone us-east1-c
+
+
+multipod interface, kubernetes to bgp, 
+
+
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=my-node-pool -o=name); do
+  kubectl cordon "$node";
+done
+
+for node in $(kubectl get nodes -l cloud.google.com/gke-nodepool=my-node-pool -o=name); do
+  kubectl drain --force --ignore-daemonsets --delete-local-data --grace-period=10 "$node";
+done
+
+
+gcloud container node-pools delete my-node-pool --cluster hello-demo-cluster --zone us-east1-c
+
+gcloud container clusters get-credentials hello-demo-cluster --zone us-east4-c
+
+export ZONE=us-east4-c
+
+curl -LO raw.githubusercontent.com/quiccklabs/Labs_solutions/master/Exploring%20Cost-optimization%20for%20GKE%20Virtual%20Machines/quicklabgsp767.sh
+
+
+sudo chmod +x quicklabgsp767.sh
+
+./quicklabgsp767.sh
